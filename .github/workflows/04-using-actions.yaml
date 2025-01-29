@@ -6,10 +6,10 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-        -name: Checkout code
-         uses: actions/checkout@v4
-        -name: Printing Folders
-         run: ls
+        - name: Checkout code
+          uses: actions/checkout@v4
+        - name: Printing Folders
+          run: ls
 
     # 1. Checkout code
     # 2. Install deps of our react application
