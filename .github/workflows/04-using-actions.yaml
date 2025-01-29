@@ -13,7 +13,7 @@ jobs:
           with:
             node-versions: '20.x'
         - name: Install Dependencies
-          run: npm ci
+          run: npm install
 
     # 1. Checkout code
     # 2. Install deps of our react application
