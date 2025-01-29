@@ -38,6 +38,7 @@ jobs:
                 echo "Repo var: ${{ vars.REPOSITORY_VAR }}"
     echo-prod:
         runs-on: ubuntu-latest
+        environment: prod
         steps:
             - name: Print Variables
               run: |
