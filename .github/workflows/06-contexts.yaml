@@ -18,7 +18,7 @@ jobs:
         runs-on: ubuntu-latest
         env:
             MY_JOB_VAR: 'job'
-            MY_OVERWRITTEN: 'job'
+            MY_OVERWRITTEN_VAR: 'job'
         steps:
             - name: Display Informantion
               run: |
