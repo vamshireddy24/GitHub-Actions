@@ -9,6 +9,8 @@ env:
 jobs:
     echo:
         runs-on: ubuntu-latest
+        env:
+            JOB_VAR: 'I am a job env var'
         steps:
             - name: Print Env Variables
               env:
