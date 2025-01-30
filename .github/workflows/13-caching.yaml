@@ -63,8 +63,8 @@ jobs:
             if: ${{ inputs.use-cache }}
             id: cache
             with:
-            path: 13-caching/react-app/node_modules
-            key: ${{ nodes.install-deps.outputs.deps-cache-key }}
+              path: 13-caching/react-app/node_modules
+              key: ${{ nodes.install-deps.outputs.deps-cache-key }}
           - name: Testing
             run: npm run test
           - name: Building
