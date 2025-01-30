@@ -64,7 +64,7 @@ jobs:
             id: cache
             with:
               path: 13-caching/react-app/node_modules
-              key: ${{ nodes.install-deps.outputs.deps-cache-key }}
+              key: ${{ needs.install-deps.outputs.deps-cache-key }}
           - name: Testing
             run: npm run test
           - name: Building
@@ -90,7 +90,7 @@ jobs:
               id: cache
               with:
                 path: 13-caching/react-app/node_modules
-                key: ${{ nodes.install-deps.outputs.deps-cache-key }}
+                key: ${{ needs.install-deps.outputs.deps-cache-key }}
             - name: Testing
               run: npm run test
             - name: Building
