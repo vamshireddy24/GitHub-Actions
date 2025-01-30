@@ -21,5 +21,5 @@ jobs:
               if: ${{ !cancelled() }}
               run: echo "I will always print, execpt when work flow is calcelled."
             - name: I will execute when cancelled
-              if: ${{ !cancelled() }}
+              if: ${{ cancelled() }}
               run: echo "I will always print, execpt when work flow is calcelled."
