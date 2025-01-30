@@ -6,7 +6,7 @@ on:
             build-status:
                 type: choice
                 options:
-                    -success
+                    - success
                     - failure
                 default: success
 jobs:
