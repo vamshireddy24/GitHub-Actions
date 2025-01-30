@@ -22,6 +22,8 @@ jobs:
               run: |
                 echo "$GITHUB_OUTPUT"
                 echo "status=${{ inputs.build-status }}">>"$GITHUB_OUTPUT"
+                echo "output1= value1" >>"$GITHUB_OUTPUT"
+                echo "output2= value2" >>"$GITHUB_OUTPUT"
     deploy:
         runs-on: ubuntu-latest
         needs: build
