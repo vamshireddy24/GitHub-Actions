@@ -6,8 +6,9 @@ on:
 jobs:
     backwords-compatibility:
         name: ${{ matrix.os }}-${{ matrix.node-version }}
-        runs-on: ubuntu-latest
+        runs-on: ${{ matrix.os }}
         strategy:
+            fail-fast: true
             matrix:
                 node-version: [18.x, 20.x, 21.x]
                 os:
