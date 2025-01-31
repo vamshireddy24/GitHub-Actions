@@ -5,7 +5,7 @@ on:
 
 env:
     build-artifact-key: app-${{ github.sha }}
-    test-report-key: test-coverage-${{ github.sha }}
+    test-coverage-key: test-coverage-${{ github.sha }}
 jobs:
     test-build:
         runs-on: ubuntu-latest
