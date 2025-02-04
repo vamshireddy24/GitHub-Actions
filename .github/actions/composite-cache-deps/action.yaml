@@ -14,8 +14,7 @@ inputs:
     description: '"dev" or "prod". Controls whether dev dependencies are installed'
     default: dev
     required: false
-
-
+    
 runs:
   using: composite
   steps:
