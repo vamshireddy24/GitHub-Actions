@@ -10,7 +10,7 @@ jobs:
         runs-on: ubuntu-latest
         defaults:
             run:
-                working-directory: ${{ env.working-ditectory }}
+                working-directory: ${{ env.working-directory }}
         steps:
             - uses: actions/checkout@v4
             - name: Step Node and NPM Dependencies
