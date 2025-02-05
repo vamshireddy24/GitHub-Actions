@@ -2,6 +2,11 @@ const core = require('@actions/core')
 const exec = require('@actions/exec')
 const github = require('@actions/github');
 
+const setupGit = async() => {
+    await exec.exec(`git config --global user.name "gh-automation"`);
+    await exec.exec(`git config --global user.email "gh-automation@email.com"`);
+}
+
 const validateBranchName = ({ branchName }) => /^[a-zA-Z0-9_\-\.\/]+$/.test(branchName);
 const validateDirectoryName = ({ dirName }) => /^[a-zA-Z0-9_\-\/]+$/.test(dirName);
 
@@ -41,8 +46,7 @@ async function run() {
     });
     if (gitStatus.stdout.length > 0){
         core.info('[js-dependency-update] : There are updates available!');
-        await exec.exec(`git config --global user.name "gh-automation"`);
-        await exec.exec(`git config --global user.email "gh-automation@email.com"`);
+        
         await exec.exec(`git checkout -b ${targetBranch}`, [], {
             ...commonExecOpts
         });
@@ -94,4 +98,4 @@ async function run() {
     */
 }
 
-run()
+run();
