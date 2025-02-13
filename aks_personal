@@ -1,0 +1,179 @@
+apiVersion: secrets-store.csi.x-k8s.io/v1
+kind: SecretProviderClass
+metadata:
+  name: azure-keyvault-secrets
+  namespace: vm-backend
+spec:
+  provider: azure
+  parameters:
+    usePodIdentity: "false"
+    useVMManagedIdentity: "true"  # Enables AKS Managed Identity
+    keyvaultName: "<KEYVAULT_NAME>"
+    objects: |
+      array:
+        - |
+          objectName: "db-username"
+          objectType: "secret"
+        - |
+          objectName: "db-password"
+          objectType: "secret"
+
+
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: backend-microservice
+  namespace: vm-backend
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: backend-microservice
+  template:
+    metadata:
+      labels:
+        app: backend-microservice
+    spec:
+      volumes:
+        - name: secrets-store
+          csi:
+            driver: secrets-store.csi.k8s.io
+            readOnly: true
+            volumeAttributes:
+              secretProviderClass: "azure-keyvault-secrets"
+      containers:
+      - name: backend-microservice
+        image: acraksvm202f.azurecr.io/vamika/backend-microservice:v0.0.1
+        env:
+        - name: SPRING_DATASOURCE_USERNAME
+          valueFrom:
+            secretKeyRef:
+              name: azure-keyvault-secrets
+              key: db-username
+        - name: SPRING_DATASOURCE_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: azure-keyvault-secrets
+              key: db-password
+        volumeMounts:
+        - name: secrets-store
+          mountPath: "/mnt/secrets-store"
+          readOnly: true
+        ports:
+        - containerPort: 8080
+
+
+ 
+workload identity
+
+
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: workload-identity-sa
+  namespace: vm-backend
+  annotations:
+    azure.workload.identity/client-id: "<managed-identity-client-id>"
+
+
+apiVersion: secrets-store.csi.x-k8s.io/v1
+kind: SecretProviderClass
+metadata:
+  name: azure-keyvault-secrets
+  namespace: vm-backend
+spec:
+  provider: azure
+  parameters:
+    usePodIdentity: "false"
+    keyvaultName: "<your-keyvault-name>"
+    objects:  |
+      array:
+        - objectName: "db-username"
+          objectType: "secret"
+        - objectName: "db-password"
+          objectType: "secret"
+
+spec:
+  serviceAccountName: workload-identity-sa
+  containers:
+    - name: backend-microservice
+      image: acraksvm202f.azurecr.io/vamika/backend-microservice:v0.0.1
+      env:
+        - name: SPRING_DATASOURCE_USERNAME
+          valueFrom:
+            secretKeyRef:
+              name: azure-keyvault-secrets
+              key: db-username
+        - name: SPRING_DATASOURCE_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: azure-keyvault-secrets
+              key: db-password
+
+
+
+aks managed identity
+
+apiVersion: secrets-store.csi.x-k8s.io/v1
+kind: SecretProviderClass
+metadata:
+  name: azure-keyvault-secrets
+  namespace: vm-backend
+spec:
+  provider: azure
+  parameters:
+    usePodIdentity: "false"
+    useVMManagedIdentity: "true"  # Enables AKS Managed Identity
+    keyvaultName: "<KEYVAULT_NAME>"
+    objects: |
+      array:
+        - |
+          objectName: "db-username"
+          objectType: "secret"
+        - |
+          objectName: "db-password"
+          objectType: "secret"
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: backend-microservice
+  namespace: vm-backend
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: backend-microservice
+  template:
+    metadata:
+      labels:
+        app: backend-microservice
+    spec:
+      volumes:
+        - name: secrets-store
+          csi:
+            driver: secrets-store.csi.k8s.io
+            readOnly: true
+            volumeAttributes:
+              secretProviderClass: "azure-keyvault-secrets"
+      containers:
+      - name: backend-microservice
+        image: acraksvm202f.azurecr.io/vamika/backend-microservice:v0.0.1
+        env:
+        - name: SPRING_DATASOURCE_USERNAME
+          valueFrom:
+            secretKeyRef:
+              name: azure-keyvault-secrets
+              key: db-username
+        - name: SPRING_DATASOURCE_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: azure-keyvault-secrets
+              key: db-password
+        volumeMounts:
+        - name: secrets-store
+          mountPath: "/mnt/secrets-store"
+          readOnly: true
+        ports:
+        - containerPort: 8080
