@@ -15,7 +15,7 @@ env:
 jobs:
   build-and-deploy:
     # Dynamically set the job name based on the application name
-    name: Build and Deploy ${{ matrix.application }}
+    name: ${{ matrix.application }}
     runs-on: windows-latest
     strategy:
       matrix:
