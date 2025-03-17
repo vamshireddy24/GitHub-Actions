@@ -1,0 +1,55 @@
+name: Deploy Applications to Azure Web App
+
+on:
+  push:
+    branches:
+      - main
+
+env:
+
+  AZURE_WEBAPP_NAME: "as-lara"
+  AZURE_PUBLISH_PROFILE: ${{ secrets.AZURE_PUBLISH_PROFILE }}
+  BUILD_CONFIGURATION: "Release"
+  SOLUTION_FILE: "PG.LARA.sln"
+
+jobs:
+  build-and-deploy:
+    # Dynamically set the job name based on the application name
+    name: Build and Deploy ${{ matrix.application }}
+    runs-on: windows-latest
+    strategy:
+      matrix:
+        application:
+          - GenerateTMSOutputTemplates
+          - GenerateValidationSummary
+          - NotifyMetadataValidation
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v3
+
+      - name: Setup NuGet
+        uses: NuGet/setup-nuget@v1
+        
+      - name: Restore NuGet Packages
+        run: nuget restore ${{ env.SOLUTION_FILE }}
+
+      - name: Build Application (${{ matrix.application }})
+        run: |
+          msbuild PG.LARA.${{ matrix.application }}.WebJob/PG.LARA.${{ matrix.application }}.WebJob.csproj `
+            /p:Configuration=${{ env.BUILD_CONFIGURATION }} `
+            /p:DeployOnBuild=true `
+            /p:OutputPath=./publish/App_Data/jobs/continuous/${{ matrix.application }}
+
+      - name: Upload Application Artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: application-${{ matrix.application }}
+          path: ./publish/App_Data/jobs/continuous/${{ matrix.application }}
+
+      - name: Deploy Application to Azure Web App
+        uses: azure/webapps-deploy@v2
+        with:
+          app-name: ${{ env.AZURE_WEBAPP_NAME }}
+          publish-profile: ${{ secrets.AZURE_PUBLISH_PROFILE }}
+
+          package: ./publish/App_Data/jobs/continuous/${{ matrix.application }} 
